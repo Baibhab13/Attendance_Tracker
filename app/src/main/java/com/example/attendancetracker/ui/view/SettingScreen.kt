@@ -1,5 +1,6 @@
 package com.example.attendancetracker.ui.view
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,30 +27,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import coil.compose.rememberAsyncImagePainter
+import com.example.attendancetracker.navigation.Screen
 
 @Composable
 fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
     val context = LocalContext.current
     var isDarkModeEnabled by remember { mutableStateOf(false) }
     var issueText by remember { mutableStateOf(TextFieldValue("")) }
-    var isScreenshotAttached by remember { mutableStateOf(false) }
+    var screenshotUri by remember { mutableStateOf<Uri?>(null) }
+    var verticalScroll = rememberScrollState()
+
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            screenshotUri = uri
+        }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding) // Ensure content does not go behind TopBar and BottomBar
-            .padding(horizontal = 16.dp) // Maintain proper content alignment
+            .verticalScroll(verticalScroll)
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp)
     ) {
-        Text(text = "Settings", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         // Theme Section
         Text(text = "Theme", fontWeight = FontWeight.Bold)
         Row(
@@ -68,20 +84,55 @@ fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
 
         // Report an Issue Section
         Text(text = "Report an Issue", fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = issueText,
             onValueChange = { issueText = it },
             placeholder = { Text("Describe the issue...") },
             modifier = Modifier.fillMaxWidth()
         )
-        Row(
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Screenshot Picker
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { isScreenshotAttached = !isScreenshotAttached },
-            verticalAlignment = Alignment.CenterVertically
+                .clickable { imagePickerLauncher.launch("image/*") }
+                .padding(vertical = 8.dp)
+                .border(1.dp, Color(0xFF3578E5), RoundedCornerShape(10.dp)),
+            shape = RoundedCornerShape(10.dp)
         ) {
-            Text(text = "Attach Screenshot", modifier = Modifier.padding(start = 8.dp))
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Attach Screenshot",
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF3578E5)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Image Preview
+                screenshotUri?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
+                        contentDescription = "Selected Screenshot",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(1.dp, Color.Gray, RoundedCornerShape(10.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
         }
+
         Button(
             onClick = {
                 Toast.makeText(context, "Report Submitted", Toast.LENGTH_SHORT).show()
@@ -98,8 +149,8 @@ fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
 
         // Legal Section
         Text(text = "Legal", fontWeight = FontWeight.Bold)
-        LegalItem("Privacy Policy", navController)
-        LegalItem("Terms & Conditions", navController)
+        LegalItem("Privacy Policy", Screen.PrivacyPolicy.route, navController)
+        LegalItem("Terms & Conditions", Screen.TermsAndConditions.route, navController)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,13 +159,14 @@ fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 8.dp, bottom = 8.dp),
             shape = RoundedCornerShape(10.dp),
             colors = CardDefaults.cardColors(Color(0xFFFFE5E5))
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "Reset App Data",
@@ -125,8 +177,9 @@ fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
                     }
                 )
                 Text(
-                    text = "This will delete all your local data and restore default settings",
+                    text = "This will delete all local data and restore default settings.",
                     fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
                     color = Color.Gray
                 )
             }
@@ -134,13 +187,14 @@ fun SettingsScreen(navController: NavController, innerPadding: PaddingValues) {
     }
 }
 
+
 @Composable
-fun LegalItem(title: String, navController: NavController) {
+fun LegalItem(title: String, destination: String, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .clickable { /* Handle navigation here */ },
+            .clickable { navController.navigate(destination) }, // Type-safe navigation
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {

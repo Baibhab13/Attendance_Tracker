@@ -66,7 +66,13 @@ fun FloatingActionButton(viewModel: ScaffoldViewModel) {
 @Composable
 fun TopBar(navController: NavController, viewModel: ScaffoldViewModel) {
     TopAppBar(
-        title = {Text(text = "Attendance Tracker")},
+        title = {
+            when(viewModel.selectedIndex.intValue) {
+                0 -> Text("Attendance Tracker")
+                1 -> Text("Schedule")
+                2 -> Text("Settings")
+            }
+        },
         actions = {
             IconButton(
                 onClick = { viewModel.expanded.value = true }

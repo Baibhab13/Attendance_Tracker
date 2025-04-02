@@ -9,43 +9,45 @@ import androidx.navigation.compose.rememberNavController
 import com.example.attendancetracker.ui.view.CalendarScreen
 import com.example.attendancetracker.ui.view.HomeScreen
 import com.example.attendancetracker.ui.view.MainScaffold
+import com.example.attendancetracker.ui.view.PrivacyPolicyScreen
 import com.example.attendancetracker.ui.view.SettingsScreen
+import com.example.attendancetracker.ui.view.TermsAndConditionsScreen
 import kotlinx.serialization.Serializable
 
 @Composable
 fun Nav() {
     val navCtrl = rememberNavController()
 
-    NavHost(navController = navCtrl, startDestination = MainScaffold) {
-        composable<MainScaffold> {
-            MainScaffold(
-                navCtrl,
-                viewModel = viewModel()
-            )
+    NavHost(navController = navCtrl, startDestination = Screen.MainScaffold.route) {
+        composable(Screen.MainScaffold.route) {
+            MainScaffold(navCtrl, viewModel = viewModel())
         }
-
-        composable<Home> {
+        composable(Screen.Home.route) {
             HomeScreen(navCtrl, innerPadding = PaddingValues())
         }
-        composable<Calendar> {
+        composable(Screen.Calendar.route) {
             CalendarScreen(innerPadding = PaddingValues())
         }
-        composable<Setting> {
+        composable(Screen.Setting.route) {
             SettingsScreen(navCtrl, innerPadding = PaddingValues())
         }
+        composable(Screen.PrivacyPolicy.route) {
+            PrivacyPolicyScreen(navCtrl)
+        }
+        composable(Screen.TermsAndConditions.route) {
+            TermsAndConditionsScreen(navCtrl)
+        }
     }
+
 
 }
 
 @Serializable
-object MainScaffold
-
-@Serializable
-object Home
-
-@Serializable
-object Calendar
-
-@Serializable
-object Setting
-
+sealed class Screen(val route: String) {
+    @Serializable object MainScaffold : Screen("mainScaffold")
+    @Serializable object Home : Screen("home")
+    @Serializable object Calendar : Screen("calendar")
+    @Serializable object Setting : Screen("settings")
+    @Serializable object PrivacyPolicy : Screen("privacy_policy")
+    @Serializable object TermsAndConditions : Screen("terms_conditions")
+}
