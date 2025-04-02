@@ -1,15 +1,26 @@
 package com.example.attendancetracker.ui.view
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import com.example.attendancetracker.viewModel.scaffoldviewModel
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.attendancetracker.viewModel.ScaffoldViewModel
 
 @Composable
-fun MainScaffold(viewModel: scaffoldviewModel) {
+fun MainScaffold(viewModel: ScaffoldViewModel) {
 
     Scaffold(
         topBar = {
@@ -24,7 +35,7 @@ fun MainScaffold(viewModel: scaffoldviewModel) {
 }
 
 @Composable
-fun ContentScreen(viewModel: scaffoldviewModel, innerPadding: PaddingValues) {
+fun ContentScreen(viewModel: ScaffoldViewModel, innerPadding: PaddingValues) {
     when(viewModel.selectedIndex.intValue) {
         0 -> HomeScreen(innerPadding)
         1 -> CalendarScreen(innerPadding)
@@ -32,13 +43,39 @@ fun ContentScreen(viewModel: scaffoldviewModel, innerPadding: PaddingValues) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(viewModel: scaffoldviewModel) {
-
+fun TopBar(viewModel: ScaffoldViewModel) {
+    TopAppBar(
+        title = {Text(text = "Attendance Tracker")},
+        actions = {
+            IconButton(
+                onClick = { viewModel.expanded.value = true }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More Options"
+                )
+            }
+            DropdownMenu(
+                modifier = Modifier.width(150.dp),
+                expanded = viewModel.expanded.value,
+                onDismissRequest = { viewModel.expanded.value = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Setting") },
+                    onClick = {
+                        viewModel.selectedIndex.intValue = 2
+                        viewModel.expanded.value = false
+                    }
+                )
+            }
+        }
+    )
 }
 
 @Composable
-fun BottomNavigationBar(viewModel: scaffoldviewModel) {
+fun BottomNavigationBar(viewModel: ScaffoldViewModel) {
     NavigationBar {
         viewModel.navItem.forEachIndexed { index, item ->
             NavigationBarItem(
@@ -46,9 +83,15 @@ fun BottomNavigationBar(viewModel: scaffoldviewModel) {
                 onClick = { viewModel.selectedIndex.intValue = index },
                 icon = {
                     if (index == viewModel.selectedIndex.intValue) {
-                        item.selectedicon
+                        Icon(
+                            imageVector = item.unselectedicon,
+                            contentDescription = item.label
+                        )
                     } else {
-                        item.unselectedicon
+                        Icon(
+                            imageVector = item.selectedicon,
+                            contentDescription = item.label
+                        )
                     }
                 },
                 label = {
