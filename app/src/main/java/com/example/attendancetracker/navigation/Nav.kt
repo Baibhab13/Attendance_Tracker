@@ -19,18 +19,19 @@ fun Nav() {
     NavHost(navController = navCtrl, startDestination = MainScaffold) {
         composable<MainScaffold> {
             MainScaffold(
+                navCtrl,
                 viewModel = viewModel()
             )
         }
 
         composable<Home> {
-            HomeScreen(innerPadding = PaddingValues())
+            HomeScreen(navCtrl, innerPadding = PaddingValues())
         }
         composable<Calendar> {
             CalendarScreen(innerPadding = PaddingValues())
         }
         composable<Setting> {
-            SettingsScreen(innerPadding = PaddingValues())
+            SettingsScreen(navCtrl, innerPadding = PaddingValues())
         }
     }
 

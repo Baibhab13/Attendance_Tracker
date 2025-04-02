@@ -3,10 +3,12 @@ package com.example.attendancetracker.ui.view
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -17,35 +19,52 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.attendancetracker.viewModel.ScaffoldViewModel
 
 @Composable
-fun MainScaffold(viewModel: ScaffoldViewModel) {
-
+fun MainScaffold(navController: NavController, viewModel: ScaffoldViewModel) {
     Scaffold(
         topBar = {
-           TopBar(viewModel)
+           TopBar(navController, viewModel)
         },
         bottomBar = {
             BottomNavigationBar(viewModel)
+        },
+        floatingActionButton = {
+            when(viewModel.selectedIndex.intValue) {
+                0 -> FloatingActionButton(viewModel)
+            }
         }
     ) {innerPadding ->
-        ContentScreen(viewModel, innerPadding)
+        ContentScreen(navController, viewModel, innerPadding)
     }
 }
 
 @Composable
-fun ContentScreen(viewModel: ScaffoldViewModel, innerPadding: PaddingValues) {
+fun ContentScreen(navController: NavController, viewModel: ScaffoldViewModel, innerPadding: PaddingValues) {
     when(viewModel.selectedIndex.intValue) {
-        0 -> HomeScreen(innerPadding)
+        0 -> HomeScreen(navController, innerPadding)
         1 -> CalendarScreen(innerPadding)
-        2 -> SettingsScreen(innerPadding)
+        2 -> SettingsScreen(navController, innerPadding)
+    }
+}
+
+@Composable
+fun FloatingActionButton(viewModel: ScaffoldViewModel) {
+    FloatingActionButton(
+        onClick = { /*TODO*/ }
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = "Set Target"
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(viewModel: ScaffoldViewModel) {
+fun TopBar(navController: NavController, viewModel: ScaffoldViewModel) {
     TopAppBar(
         title = {Text(text = "Attendance Tracker")},
         actions = {
