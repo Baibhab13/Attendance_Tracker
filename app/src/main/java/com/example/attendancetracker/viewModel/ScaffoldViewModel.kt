@@ -23,5 +23,4 @@ class ScaffoldViewModel: ViewModel() {
         navItem("Schedule", Icons.Outlined.DateRange, Icons.Default.DateRange),
         navItem("Settings", Icons.Outlined.Settings, Icons.Default.Settings)
     )
-
 }
