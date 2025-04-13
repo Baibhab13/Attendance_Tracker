@@ -10,7 +10,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.attendancetracker.model.navItem
+import com.example.attendancetracker.model.NavItem
 
 class ScaffoldViewModel: ViewModel() {
 
@@ -19,8 +19,8 @@ class ScaffoldViewModel: ViewModel() {
     val expanded = mutableStateOf(false)
 
     val navItem = listOf(
-        navItem("Home", Icons.Outlined.Home, Icons.Default.Home),
-        navItem("Schedule", Icons.Outlined.DateRange, Icons.Default.DateRange),
-        navItem("Settings", Icons.Outlined.Settings, Icons.Default.Settings)
+        NavItem("Home", Icons.Outlined.Home, Icons.Default.Home),
+        NavItem("Schedule", Icons.Outlined.DateRange, Icons.Default.DateRange),
+        NavItem("Settings", Icons.Outlined.Settings, Icons.Default.Settings)
     )
 }

@@ -26,14 +26,14 @@ import com.example.attendancetracker.viewModel.ScaffoldViewModel
 fun MainScaffold(navController: NavController, viewModel: ScaffoldViewModel) {
     Scaffold(
         topBar = {
-           TopBar(navController, viewModel)
+           TopBar(viewModel)
         },
         bottomBar = {
             BottomNavigationBar(viewModel)
         },
         floatingActionButton = {
             when(viewModel.selectedIndex.intValue) {
-                0 -> FloatingActionButton(viewModel)
+                0 -> FloatingActionButton()
             }
         }
     ) {innerPadding ->
@@ -44,14 +44,14 @@ fun MainScaffold(navController: NavController, viewModel: ScaffoldViewModel) {
 @Composable
 fun ContentScreen(navController: NavController, viewModel: ScaffoldViewModel, innerPadding: PaddingValues) {
     when(viewModel.selectedIndex.intValue) {
-        0 -> HomeScreen(navController, innerPadding)
+        0 -> HomeScreen(innerPadding)
         1 -> ScheduleScreen(innerPadding)
         2 -> SettingsScreen(navController, innerPadding)
     }
 }
 
 @Composable
-fun FloatingActionButton(viewModel: ScaffoldViewModel) {
+fun FloatingActionButton() {
     FloatingActionButton(
         onClick = { /*TODO*/ }
     ) {
@@ -64,7 +64,7 @@ fun FloatingActionButton(viewModel: ScaffoldViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, viewModel: ScaffoldViewModel) {
+fun TopBar(viewModel: ScaffoldViewModel) {
     TopAppBar(
         title = {
             when(viewModel.selectedIndex.intValue) {
