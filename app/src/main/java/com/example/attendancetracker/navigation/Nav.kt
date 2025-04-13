@@ -23,7 +23,7 @@ fun Nav() {
             MainScaffold(navCtrl, viewModel = viewModel())
         }
         composable(Screen.Home.route) {
-            HomeScreen(navCtrl, innerPadding = PaddingValues())
+            HomeScreen(innerPadding = PaddingValues())
         }
         composable(Screen.Calendar.route) {
             ScheduleScreen(innerPadding = PaddingValues())
@@ -38,8 +38,6 @@ fun Nav() {
             TermsAndConditionsScreen(navCtrl)
         }
     }
-
-
 }
 
 @Serializable
