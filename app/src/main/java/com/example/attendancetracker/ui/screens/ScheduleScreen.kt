@@ -53,7 +53,6 @@ fun ScheduleScreen(
             weekDates.forEach { date ->
                 val isSelected = date == selectedDate
                 val day = date.format(DateTimeFormatter.ofPattern("EEE"))
-                val dayNumber = date.format(DateTimeFormatter.ofPattern("dd"))
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,7 +63,6 @@ fun ScheduleScreen(
                         .padding(vertical = 8.dp, horizontal = 16.dp)
                 ) {
                     Text(day, color = if (isSelected) Color.White else Color.Black)
-                    Text(dayNumber, color = if (isSelected) Color.White else Color.Black)
                 }
             }
         }
